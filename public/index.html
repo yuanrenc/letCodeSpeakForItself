@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch Data from Backend</title>
+    <style>
+        li {
+            font-family: Arial, sans-serif; 
+            color: #333; 
+            font-size: 16px; 
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px; 
+            background-color: #f9f9f9; 
+        }
+    </style>
+    <script>
+        function fetchData() {
+            // Make an API call to fetch data from the backend
+            fetch('http://localhost:8088/data')
+                .then(response => response.json())
+                .then(data => {
+                    // Display the fetched data on the page
+                    const list = document.getElementById('data');
+                    list.innerHTML = ''
+                    data.forEach(item => {
+                    const listItem = document.createElement('li');
+                    const id=`ID:${item.Id}`
+                    const title=`Title:${item.Title}`
+                    const priority=`Priority:${item.Priority}`
+                    listItem.innerText = id+ ` `+title+` `+priority;
+                    list.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Fetch Data from Database</h1>
+    <button onclick="fetchData()">Fetch Data</button>
+    <div>
+        <ul id="data"></ul>
+    </div>
+</body>
+</html>
