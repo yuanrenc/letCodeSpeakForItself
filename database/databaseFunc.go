@@ -10,7 +10,7 @@ type DatabaseConfig struct {
 	DBPassword string
 	DbPort     string
 	DbName     string
-	DbHostg    string
+	DbHost     string
 }
 
 type Task struct {
