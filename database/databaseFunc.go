@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -25,6 +26,7 @@ func ConnectToDataBase() *sql.DB {
 		log.Fatal("Failed to connect to PostgreSQL:", err)
 		return nil
 	}
+	fmt.Println("Connected to database")
 	return db
 }
 
@@ -53,6 +55,7 @@ func InsertData(db *sql.DB) {
 			log.Fatal("Failed to insert data into table:", err)
 		}
 	}
+	fmt.Println("data was inserted")
 }
 
 func GetTasks(db *sql.DB) []Task {
