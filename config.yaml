@@ -1,0 +1,7 @@
+DbUser: postgres
+DbPassword: "103159"
+DbName: myDB
+DbPort: "5432"
+DbHost: "localhost"
+ListenHost: "127.0.0.1"
+ListenPort: "8088"

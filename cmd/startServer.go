@@ -36,8 +36,8 @@ func startServer() {
 		WriteTimeout:   60 * time.Second,
 		MaxHeaderBytes: 1 << 16,
 	}
-
-	listener, err := net.Listen("tcp", "localhost:8088")
+	listenSpec := cfg.ListenSpec
+	listener, err := net.Listen("tcp", listenSpec)
 	if err != nil {
 		log.Printf("Error creating listener - %v\n", err)
 	}
@@ -48,18 +48,25 @@ func startServer() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write(file)
 	})
+	fmt.Printf("Server started at %v\n", listenSpec)
 	http.HandleFunc("/data", dataHandler)
 	if err := http.ListenAndServe(":8088", nil); err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Server started at http://localhost:8080\n")
 	go server.Serve(listener)
 }
 
 func dataHandler(w http.ResponseWriter, r *http.Request) {
 	// get all tasks from database
-	db := database.ConnectToDataBase()
+	dbConfig := database.DatabaseConfig{
+		DbUser:     cfg.DbUser,
+		DBPassword: cfg.DbPassword,
+		DbPort:     cfg.DbPort,
+		DbName:     cfg.DbName,
+		DbHost:     cfg.DbHost,
+	}
+	db := database.ConnectToDataBase(&dbConfig)
 	defer db.Close()
 	data := database.GetTasks(db)
 	jsonData, _ := json.Marshal(data)

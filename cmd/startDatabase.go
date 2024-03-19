@@ -12,7 +12,15 @@ var dataCmd = &cobra.Command{
 	Use:   "database",
 	Short: "active database service: create table and insert data",
 	Run: func(cmd *cobra.Command, args []string) {
-		db := database.ConnectToDataBase()
+		dbConfig := database.DatabaseConfig{
+			DbUser:     cfg.DbUser,
+			DBPassword: cfg.DbPassword,
+			DbPort:     cfg.DbPort,
+			DbName:     cfg.DbName,
+			DbHost:     cfg.DbHost,
+		}
+		fmt.Println(dbConfig)
+		db := database.ConnectToDataBase(&dbConfig)
 		defer db.Close()
 		// if the table already exist, will not create a new table
 		database.CreateTable(db)

@@ -20,8 +20,10 @@ type Task struct {
 	Priority string
 }
 
-func ConnectToDataBase() *sql.DB {
-	db, err := sql.Open("postgres", "user=postgres password=103159 dbname=myDB sslmode=disable")
+func ConnectToDataBase(dbConfig *DatabaseConfig) *sql.DB {
+	dbInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=postgres sslmode=disable",
+		dbConfig.DbHost, dbConfig.DbPort, dbConfig.DbUser, dbConfig.DBPassword)
+	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
 		log.Fatal("Failed to connect to PostgreSQL:", err)
 		return nil
