@@ -8,7 +8,7 @@ import (
 
 type DatabaseConfig struct {
 	DbUser     string
-	DBPassword string
+	DbPassword string
 	DbPort     string
 	DbName     string
 	DbHost     string
@@ -20,9 +20,9 @@ type Task struct {
 	Priority string
 }
 
-func ConnectToDataBase(dbConfig *DatabaseConfig) *sql.DB {
-	dbInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=postgres sslmode=disable",
-		dbConfig.DbHost, dbConfig.DbPort, dbConfig.DbUser, dbConfig.DBPassword)
+func ConnectToDatabase(dbConfig *DatabaseConfig) *sql.DB {
+	dbInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable",
+		dbConfig.DbHost, dbConfig.DbPort, dbConfig.DbUser, dbConfig.DbPassword)
 	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
 		log.Fatal("Failed to connect to PostgreSQL:", err)
@@ -32,6 +32,21 @@ func ConnectToDataBase(dbConfig *DatabaseConfig) *sql.DB {
 	return db
 }
 
+func CreateDatabase(db *sql.DB, dbName string) {
+	rows, err := db.Query("SELECT 1 FROM pg_database WHERE datname=$1", dbName)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		fmt.Println("Database doesn't exist, creating a new one")
+		_, err = db.Exec("CREATE DATABASE " + dbName)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Database created successfully")
+	}
+}
 func CreateTable(db *sql.DB) {
 	query := `CREATE TABLE IF NOT EXISTS tasks (
 			id SERIAL PRIMARY KEY,

@@ -42,5 +42,6 @@ func initConfig() {
 	cfg.DbPassword = conf.DbPassword
 	cfg.DbHost = conf.DbHost
 	cfg.DbPort = conf.DbPort
-	cfg.ListenSpec = conf.ListenHost + ":" + conf.ListenPort
+	cfg.ListenPort = conf.ListenPort
+	cfg.ListenHost = conf.ListenHost
 }

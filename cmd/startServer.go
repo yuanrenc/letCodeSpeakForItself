@@ -6,6 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"embed"
@@ -36,7 +39,7 @@ func startServer() {
 		WriteTimeout:   60 * time.Second,
 		MaxHeaderBytes: 1 << 16,
 	}
-	listenSpec := cfg.ListenSpec
+	listenSpec := cfg.ListenHost + ":" + cfg.ListenPort
 	listener, err := net.Listen("tcp", listenSpec)
 	if err != nil {
 		log.Printf("Error creating listener - %v\n", err)
@@ -50,26 +53,38 @@ func startServer() {
 	})
 	fmt.Printf("Server started at %v\n", listenSpec)
 	http.HandleFunc("/data", dataHandler)
-	if err := http.ListenAndServe(":8088", nil); err != nil {
-		log.Fatal(err)
-	}
-
 	go server.Serve(listener)
+	waitForSignal()
 }
 
 func dataHandler(w http.ResponseWriter, r *http.Request) {
 	// get all tasks from database
 	dbConfig := database.DatabaseConfig{
 		DbUser:     cfg.DbUser,
-		DBPassword: cfg.DbPassword,
+		DbPassword: cfg.DbPassword,
 		DbPort:     cfg.DbPort,
 		DbName:     cfg.DbName,
 		DbHost:     cfg.DbHost,
 	}
-	db := database.ConnectToDataBase(&dbConfig)
+	db := database.ConnectToDatabase(&dbConfig)
 	defer db.Close()
 	data := database.GetTasks(db)
 	jsonData, _ := json.Marshal(data)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
+}
+
+func waitForSignal() {
+	xsig := make(chan os.Signal)
+	signal.Notify(xsig, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	hsig := make(chan os.Signal)
+	signal.Notify(hsig, syscall.SIGHUP)
+	for {
+		select {
+		case s := <-xsig:
+			log.Fatalf("Got signal: %v, exiting.", s)
+		case s := <-hsig:
+			log.Printf("Got signal: %v, continue.", s)
+		}
+	}
 }

@@ -15,7 +15,6 @@ type Config struct {
 	DbPort     string
 	ListenHost string
 	ListenPort string
-	ListenSpec string
 }
 
 func LoadConfig() (*Config, error) {
