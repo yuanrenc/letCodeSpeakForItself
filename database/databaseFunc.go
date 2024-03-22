@@ -7,11 +7,11 @@ import (
 )
 
 type DatabaseConfig struct {
-	DbUser     string
-	DbPassword string
-	DbPort     string
-	DbName     string
-	DbHost     string
+	DbUser     *string
+	DbPassword *string
+	DbPort     *string
+	DbName     *string
+	DbHost     *string
 }
 
 type Task struct {
@@ -21,8 +21,9 @@ type Task struct {
 }
 
 func ConnectToDatabase(dbConfig *DatabaseConfig) *sql.DB {
+	config := *dbConfig
 	dbInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable",
-		dbConfig.DbHost, dbConfig.DbPort, dbConfig.DbUser, dbConfig.DbPassword)
+		*config.DbHost, *config.DbPort, *config.DbUser, *config.DbPassword)
 	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
 		log.Fatal("Failed to connect to PostgreSQL:", err)
@@ -40,7 +41,8 @@ func CreateDatabase(db *sql.DB, dbName string) {
 	defer rows.Close()
 	for rows.Next() {
 		fmt.Println("Database doesn't exist, creating a new one")
-		_, err = db.Exec("CREATE DATABASE " + dbName)
+		execInfo := fmt.Sprintf("CREATE DATABASE + %v", dbName)
+		_, err = db.Exec(execInfo)
 		if err != nil {
 			panic(err)
 		}

@@ -59,12 +59,13 @@ func startServer() {
 
 func dataHandler(w http.ResponseWriter, r *http.Request) {
 	// get all tasks from database
+	enableCors(&w)
 	dbConfig := database.DatabaseConfig{
-		DbUser:     cfg.DbUser,
-		DbPassword: cfg.DbPassword,
-		DbPort:     cfg.DbPort,
-		DbName:     cfg.DbName,
-		DbHost:     cfg.DbHost,
+		DbUser:     &cfg.DbUser,
+		DbPassword: &cfg.DbPassword,
+		DbPort:     &cfg.DbPort,
+		DbName:     &cfg.DbName,
+		DbHost:     &cfg.DbHost,
 	}
 	db := database.ConnectToDatabase(&dbConfig)
 	defer db.Close()
@@ -87,4 +88,8 @@ func waitForSignal() {
 			log.Printf("Got signal: %v, continue.", s)
 		}
 	}
+}
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
