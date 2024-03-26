@@ -1,5 +1,5 @@
-ARG arch
-FROM golang:alpine AS build
+ARG arch 
+FROM --platform=linux/amd64 golang:alpine AS build
 
 WORKDIR /app
 
