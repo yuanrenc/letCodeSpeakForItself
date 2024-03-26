@@ -8,6 +8,13 @@ env:
 jobs:
     build:
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            platform:
+              - linux/amd64
+              - darwin/arm64
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -31,5 +38,5 @@ jobs:
                 file: ./Dockerfile
                 push: true
                 tags: colinwang847/letcodespeakforitself:latest
-                platforms: linux/amd64,darwin/arm64
+                platforms: ${{ matrix.platform }}
                 # build-args: arch=${{env.ARCH}}
