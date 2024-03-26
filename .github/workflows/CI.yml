@@ -10,6 +10,11 @@ jobs:
           matrix:
             opreation-system: [darwin, linux]
             arch: [amd64, arm64]
+            exclude:
+              - opreation-system: darwin
+                arch: amd64
+              - opreation-system: linux
+                arch: arm64
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -29,8 +34,9 @@ jobs:
             - name: Build Docker image
               uses: docker/build-push-action@v2
               with:
-                    context: .
-                    file: ./Dockerfile
-                    push: true
-                    tags: your-docker-image-tag
-                    platforms: ${{ matrix.opreation-system}}/${{matrix.arch}}
+                context: .
+                file: ./Dockerfile
+                push: true
+                tags: colinwang847/letcodespeakforitself/${{ matrix.opreation-system}}
+                platforms: ${{ matrix.opreation-system}}/${{matrix.arch}}
+                build-args: ARCH=${{matrix.arch}}
