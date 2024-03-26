@@ -31,5 +31,5 @@ jobs:
                 file: ./Dockerfile
                 push: true
                 tags: colinwang847/letcodespeakforitself:latest
-                platforms: linux/amd64,linux/arm64
+                platforms: linux/amd64,darwin/arm64
                 # build-args: arch=${{env.ARCH}}
