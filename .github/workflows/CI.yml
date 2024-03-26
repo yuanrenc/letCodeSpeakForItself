@@ -2,18 +2,14 @@ name: Build Golang Image
 
 on:
     push:
+      branches:
+        - main
 
 env:
   ARCH: amd64
 jobs:
     build:
         runs-on: ubuntu-latest
-        strategy:
-          fail-fast: false
-          matrix:
-            platform:
-              - linux/amd64
-              - darwin/arm64
 
         steps:
             - name: Checkout code
@@ -38,4 +34,4 @@ jobs:
                 file: ./Dockerfile
                 push: true
                 tags: colinwang847/letcodespeakforitself:latest
-                platforms: ${{ matrix.platform }}
+                platforms: linux/amd64,darwin/arm64
