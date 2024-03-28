@@ -53,6 +53,13 @@ func startServer() {
 	})
 	fmt.Printf("Server started at %v\n", listenSpec)
 	http.HandleFunc("/data", dataHandler)
+	http.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("all good"))
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+	})
 	go server.Serve(listener)
 	waitForSignal()
 }
